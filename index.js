@@ -12,7 +12,8 @@ const uri = "mongodb+srv://<dbname>:<dbpassword>@cluster0-ubezg.mongodb.net/empl
 // mongoose setup
 mongoose.connect(uri, {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useCreateIndex: true
   })
   .then(() => {
     console.log("MongoDB Connected ...")
