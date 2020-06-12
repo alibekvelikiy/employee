@@ -3,10 +3,11 @@ var cors = require('cors');
 const app = express();
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const auth = require("./middlewares/auth.middleware")
 Employees = require('./models/employees');
 
 // REPLACE WITH YOUR URI !!!
-const uri = "mongodb+srv://<username>:<password>@test-byvi5.mongodb.net/test?retryWrites=true&w=majority"
+const uri = "mongodb+srv://<dbname>:<dbpassword>@cluster0-ubezg.mongodb.net/employees?retryWrites=true&w=majority"
 
 // mongoose setup
 mongoose.connect(uri, {
@@ -27,6 +28,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // route setup
+app.use("/api/auth", require("./routes/auth.routes"))
+
 app.get('/', (req, res) => {
     res.send('API is running');
 });
@@ -49,7 +52,7 @@ app.get('/api/employee/:id', (req, res) => {
     })
 });
 
-app.post('/api/employees', (req, res) => {
+app.post('/api/employees', auth, (req, res) => {
     const employee = req.body;
     Employees.createEmployee(employee, (err, employee) => {
         if (err) {
@@ -60,7 +63,7 @@ app.post('/api/employees', (req, res) => {
 });
 
 
-app.put('/api/employee/:id', (req, res) => {
+app.put('/api/employee/:id', auth, (req, res) => {
     const id = req.params.id;
     const employee = req.body;
      // by default findOneAndUpdate returns original document. { new: true } returns updated one.
@@ -72,7 +75,7 @@ app.put('/api/employee/:id', (req, res) => {
     })
 })
 
-app.delete('/api/employee/:id', (req, res) => {
+app.delete('/api/employee/:id', auth, (req, res) => {
     const id = req.params.id;
     Employees.deleteEmployee(id, (err, employee) => {
         if (err) {

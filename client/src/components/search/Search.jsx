@@ -4,13 +4,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { getSearchValue, getSearchBy } from '../../actions';
 
-const Search = ({ search, getSearchValue, getSearchBy, searchBy }) => {
+const Search = ({ search, getSearchValue, getSearchBy, searchBy, token }) => {
 
     return (
         <div className="search-bar">
-            <div className="aud">
-              <Link className='add-user' to='/new-employee'>ADD NEW EMPLOYEE</Link>
-            </div>
+            {!!token && <div className="aud">
+                <Link className='add-user' to='/new-employee'>ADD NEW EMPLOYEE</Link>
+            </div>}
             <input value={search} onChange={getSearchValue} className="search" placeholder="Search employee" />
             <select className="select" onChange={getSearchBy} value={searchBy}>
                 <option value="">Select</option>
@@ -27,7 +27,8 @@ const Search = ({ search, getSearchValue, getSearchBy, searchBy }) => {
 const mapStateToProps = state => {
     return {
         search: state.crudReducers.search,
-        searchBy: state.crudReducers.searchBy
+        searchBy: state.crudReducers.searchBy,
+        token: state.auth.token
     }
 }
 export default connect(mapStateToProps, {getSearchValue, getSearchBy})(Search);

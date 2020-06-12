@@ -22,13 +22,16 @@ export const getData = () => dispatch => {
 }
 
 // add employee
-export const addEmployee = (employee) => dispatch => {
+export const addEmployee = (employee, token) => dispatch => {
 
     console.log("employee", employee);
 
     fetch(`${baseUrl}api/employees`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(employee)
       })
         .then(res => res.json())
@@ -47,11 +50,14 @@ export const addEmployee = (employee) => dispatch => {
 }
 
 // edit employee
-export const editEmployee = (employee) => dispatch => {
+export const editEmployee = (employee, token) => dispatch => {
 
     fetch(`${baseUrl}api/employee/${employee._id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(employee)
       })
         .then(res => res.json())
@@ -69,11 +75,12 @@ export const editEmployee = (employee) => dispatch => {
     })
 }
 // delete employee
-export const deleteEmployee = (e, _id) => dispatch => {
+export const deleteEmployee = (e, _id, token) => dispatch => {
     e.preventDefault();
 
     fetch(`${baseUrl}api/employee/${_id}`, {
         method: 'DELETE',
+        headers: {'Authorization': `Bearer ${token}`}
       })
         .then(res => res.json())
         .then(response => {

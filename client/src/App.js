@@ -1,59 +1,53 @@
-import React, { Component } from 'react';
-import List from './components/list/List';
-import Search from './components/search/Search';
+import React, {useEffect} from 'react';
 import './App.css'
-import { Switch, Route, BrowserRouter as Router, Redirect } from 'react-router-dom';
-import Employee from './components/employee/Employee.jsx';
-import AddEmployee from './components/addemployee/AddEmployee.jsx';
-import { getData, addEmployee, editEmployee, deleteEmployee } from './actions';
-import { connect } from 'react-redux';
+import {BrowserRouter as Router} from 'react-router-dom';
+import {getData, addEmployee, editEmployee, deleteEmployee} from './actions';
+import {connect} from 'react-redux';
+import {useRoutes} from "./routes";
+import {AuthActions} from "./reducers/auth";
+import {useAuthButton} from "./button.auth";
+import 'materialize-css'
 
-class App extends Component {
+const App = (props) => {
+    const {isLoading, getData, checkAuthed, token, signOut} = props;
+    const authButton = useAuthButton(!!token, signOut)
+    const routes = useRoutes(isLoading, authButton)
 
-  componentDidMount() {
-    this.props.getData();
-  }
+    useEffect(() => {
+        getData()
+    }, [getData])
 
-  render() {
-    // spinner
-    const loader = <div className="lds-dual-ring"></div>;
-    // if loaded render List
-    let content = this.props.isLoading ? loader : <List />;
+    useEffect(() => {
+        checkAuthed()
+    }, [token, checkAuthed])
+
     return (
-      <React.Fragment>
-        <div className="sticky">
-            <div>Made by Seytech students. 2020</div>
-        </div>
-        <div className='app'>
-          <Router>
-            <Switch>
-              <Route exact path='/'>
-                <Redirect to="/page/1" />
-              </Route>
-              <Route path='/page/:page'>
-                <Search />
-                {content}
-              </Route>
-              <Route path='/employee/:id'>
-                <Employee />
-              </Route>
-              <Route exact path='/new-employee/'>
-                <AddEmployee />
-              </Route>
-            </Switch>
-          </Router>
-        </div>
-      </React.Fragment>
+        <>
+            <div className="sticky">
+                <div>Made by Seytech students. 2020</div>
+            </div>
+            <div className="app">
+                <Router>
+                    {routes}
+                </Router>
+            </div>
+        </>
     );
-  }
 }
 
-const mapStateToProps = state => {
-  return {
+const mapStateToProps = state => ({
     employees: state.crudReducers.employees,
     isLoading: state.crudReducers.isLoading,
     sortBy: state.crudReducers.sortBy,
     toggleOrder: state.crudReducers.toggleOrder,
-  }
-}
-export default connect(mapStateToProps, { getData, addEmployee, editEmployee, deleteEmployee })(App);
+    token: state.auth.token
+});
+
+export default connect(mapStateToProps, {
+    getData,
+    addEmployee,
+    editEmployee,
+    deleteEmployee,
+    checkAuthed: AuthActions.checkAuthed,
+    signOut: AuthActions.signOut
+})(App);

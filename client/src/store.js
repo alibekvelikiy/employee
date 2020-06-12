@@ -5,4 +5,5 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 
 const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)));
 
+window._store = store
 export default store;

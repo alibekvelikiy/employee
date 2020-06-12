@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router";
 import "./list.css";
-import { Link, Redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Edit from "../edit/Edit.jsx";
 import { connect } from "react-redux";
 import { deleteEmployee, editEmployee, setSortBy } from "../../actions";
@@ -44,8 +44,6 @@ class List extends Component {
       search,
       searchBy,
       deleteEmployee,
-
-      employee,
       toggleModal
     } = this.props;
     let { limit, page } = this.state;
@@ -89,7 +87,7 @@ class List extends Component {
       <div className="content">
         {employees
           .slice(limit * (page - 1), limit * page)
-          .map((employee, ind) => {
+          .map((employee) => {
             const {
               _id,
               id,
@@ -110,17 +108,17 @@ class List extends Component {
                 </div>
                 <div className="cell">{city}</div>
                 <div className="cell">{state}</div>
-                <div className="edit" onClick={(e) => toggleModal(e, employee)}>
+                {!!this.props.token && <div className="edit" onClick={(e) => toggleModal(e, employee)}>
                   Edit
-                </div>
-                <div
+                </div>}
+                {!!this.props.token && <div
                   className="trash"
                   onClick={(e) => {
-                    deleteEmployee(e, _id);
+                    deleteEmployee(e, _id, this.props.token);
                   }}
                 >
                   Delete
-                </div>
+                </div>}
               </Link>
             );
           })}
@@ -235,11 +233,12 @@ const mapStateToProps = (state) => {
     searchBy: state.crudReducers.searchBy,
     
     employee: state.modalReducers.employee,
+    token: state.auth.token
   };
 };
 export default connect(mapStateToProps, {
   deleteEmployee,
-  editEmployee,
+    editEmployee,
   setSortBy,
 
   toggleModal,

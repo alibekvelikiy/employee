@@ -37,7 +37,8 @@ class Edit extends Component {
 
   onSave = () => {
     const { employee } = this.state;
-    this.props.editEmployee(employee);
+    const { token } = this.props;
+    this.props.editEmployee(employee, token);
     this.props.onCloseModal()
   };
 
@@ -127,6 +128,7 @@ const mapStateToProps = (state) => {
   return {
     editMode: state.modalReducers.editMode,
     employee: state.modalReducers.employee,
+    token: state.auth.token
   };
 };
 

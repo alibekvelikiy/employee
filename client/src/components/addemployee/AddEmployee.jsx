@@ -107,10 +107,10 @@ class AddEmployee extends Component {
 
   addEmployee = (e) => {
     const { employee, errors } = this.state;
-    const { addEmployee } = this.props;
+    const { addEmployee, token } = this.props;
 
     if (validateForm(errors, employee)) {
-      addEmployee(employee);
+      addEmployee(employee, token);
     } else {
       e.preventDefault();
       this.setState({ alert: true });
@@ -229,10 +229,10 @@ class AddEmployee extends Component {
   }
 }
 
-// const mapStateToProps = state => {
-//   return {
-//     employees: state.app.employees
-//   }
-// }
+const mapStateToProps = state => {
+  return {
+    token: state.auth.token
+  }
+}
 
-export default connect(null, { addEmployee })(withRouter(AddEmployee));
+export default connect(mapStateToProps, { addEmployee })(withRouter(AddEmployee));
